@@ -96,6 +96,7 @@ class SubscriptionType(models.Model):
         return self.name
 
 class Subscription(models.Model):
+    customer = models.ForeignKey(Customer,on_delete=models.CASCADE,default=1)
     product_id = models.ForeignKey(Product,on_delete=models.CASCADE)
     start_time = models.DateTimeField(auto_now=False, auto_now_add=False)
     end_time = models.DateTimeField(auto_now=False, auto_now_add=False)

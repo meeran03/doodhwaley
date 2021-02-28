@@ -14,6 +14,7 @@ from rest_framework.authtoken.serializers import AuthTokenSerializer
 from knox.views import LoginView as KnoxLoginView
 
 
+
 class RegisterAPIView(generics.GenericAPIView):
     serializer_class = RegisterSerializer
 
