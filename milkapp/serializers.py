@@ -1,6 +1,8 @@
 from rest_framework import serializers
 from .models import *
 from django.contrib.auth import authenticate
+from .push import send_notification,send_notification_store,send_notification_delivery_boy
+
 
 User._meta.get_field('email')._unique = True
 
@@ -52,6 +54,20 @@ class OrderSerializer(serializers.ModelSerializer):
     class Meta:
         model = Order
         fields = "__all__"
+    
+    def create(self, validated_data):
+        customer = validated_data['customer'].user
+        stores = User.objects.filter(is_store=True)
+        delivery_boys = User.objects.filter(is_deliveryBoy=True)
+        print(stores)
+        temp_store = send_notification_store(customer,self,stores)
+        print("DElocery boys are: ",delivery_boys)
+        delivery_boy = send_notification_delivery_boy(customer,self,temp_store,delivery_boys)
+        store = temp_store
+        print("Customer from serializer",customer)
+        validated_data['store'] = Store.objects.get(user=store)
+        validated_data['delivery_boy'] = DeliveryBoy.objects.get(user=delivery_boy)
+        return Order.objects.create(**validated_data)
 
 class OrderProductSerializer(serializers.ModelSerializer):
     class Meta:

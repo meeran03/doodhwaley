@@ -18,9 +18,7 @@ def my_task():
         duration = datetime.combine(date.min, x) - datetime.combine(date.min, order.timing)
         hours = duration.total_seconds() // 3600
         minutes = (duration.total_seconds()//60)%60
-        if not (hours==0 and minutes<35):
+        if (hours==0 and (minutes<35 and minutes>30)):
             send_notification_store(order.customer.user,order,stores)
         print ("Minutes : ",minutes, hours)
         print(" I am being executedsdas")
-
-my_task()

@@ -44,7 +44,32 @@ def send_notification_store(Customer,order,stores):
     print("Response is : ",r.json())
     # extracting response text  
     pastebin_url = r.text 
-    print("The pastebin URL is:%s"%pastebin_url) 
+    return our_store
+
+def send_notification_delivery_boy(Customer,order,our_store,riders):
+    our_rider = riders[0]
+    distance = calculate_distance(our_rider.latitude,our_rider.longitude,our_store.latitude,our_store.longitude)
+    for rider in riders:
+        temp = calculate_distance(rider.latitude,rider.longitude,our_store.latitude,our_store.longitude)
+        if distance > temp:
+            distance = temp
+            our_rider = rider
+    print(our_store.__dict__)
+    push_token = our_rider.push_token
+
+
+    API_ENDPOINT = "https://exp.host/--/api/v2/push/send"
+    data = {
+    'to': push_token,
+    'sound': 'default',
+    'title': "title",
+    'body': "message",
+    }
+    # sending post request and saving response as response object 
+    r = requests.post(url = API_ENDPOINT, data = data) 
+    print("Response is : ",r.json())
+    # extracting response text  
+    return our_rider
 
 
 # send_notification_store(User.objects.get(is_store=True),Order.objects.get(id=4))

@@ -1,7 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 import datetime
-from .push import send_notification,send_notification_store
+from .push import send_notification,send_notification_store,send_notification_delivery_boy
 
 class User(AbstractUser):
     image = models.ImageField(height_field=None, width_field=None, max_length=None)
@@ -69,17 +69,24 @@ class DeliveryBoy(models.Model):
 class Order(models.Model):
     customer = models.ForeignKey(Customer,on_delete=models.CASCADE)
     store = models.ForeignKey(Store,on_delete=models.CASCADE)
+    delivery_boy = models.ForeignKey(DeliveryBoy,on_delete=models.CASCADE,default=1)
     price = models.IntegerField(default=0)
     status = models.CharField(max_length=50,default="Active")
 
-    def save(self,*args,**kwargs):
-        created = not self.pk
-        super().save(*args,**kwargs)
-        customer = self.customer.user
-        stores = User.objects.filter(is_store=True)
-        if created:
-            print(stores)
-            send_notification_store(customer,self,stores)
+    # def save(self,*args,**kwargs):
+    #     created = not self.pk
+    #     customer = self.customer.user
+    #     stores = User.objects.filter(is_store=True)
+    #     delivery_boys = User.objects.filter(is_deliveryBoy=True)
+    #     print(stores)
+    #     temp_store = send_notification_store(customer,self,stores)
+    #     print("DElocery boys are: ",delivery_boys)
+    #     delivery_boy = send_notification_delivery_boy(customer,self,temp_store,delivery_boys)
+    #     store = temp_store.id
+    #     print(super().__dict__)
+    #     super().store_id = store
+    #     super().delivery_boy_id = delivery_boy
+    #     #super().save(*args,**kwargs) # this is the creation of the order
 
 
 class OrderProduct(models.Model):

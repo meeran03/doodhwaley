@@ -84,6 +84,20 @@ class OrderViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.AllowAny]
     queryset = Order.objects.all()
 
+    def get_queryset(self):
+        """
+        Optionally restricts the returned purchases to a given user,
+        by filtering against a `username` query parameter in the URL.
+        """
+        queryset = Order.objects.all()
+        customer = self.request.query_params.get('customer', None)
+        status = self.request.query_params.get('status', None)
+        if customer is not None:
+            queryset = queryset.filter(customer=customer)
+            if status is not None:
+                queryset = queryset.filter(status=status)
+        return queryset
+
 class OrderProductViewSet(viewsets.ModelViewSet):
     serializer_class = OrderProductSerializer
     permission_classes = [permissions.AllowAny]
